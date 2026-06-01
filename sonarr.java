@@ -1,20 +1,37 @@
-public class datatypes{
-    public static void main(String[]rgs){
-        byte b=100;
-        short s=200;
-        int num=1331;
-        long l=923746581
-        double n1=22.4;
-        float n2=22.4f;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Scanner;
 
-        system.out.println(b);
-        System.out.println(s);
-        System.out.println(num);
-        System.out.println(l);
-        System.out.println(n1);
-        System.out.println(n2);
-        
-    
+public class InsecureApp {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Hardcoded credentials (Security Issue)
+        String url = "jdbc:mysql://localhost:3306/testdb";
+        String user = "root";
+        String password = "root123"; // Hardcoded password
+
+        try {
+            Connection conn = DriverManager.getConnection(url, user, password);
+            Statement stmt = conn.createStatement();
+
+            System.out.println("Enter username to search:");
+            String input = sc.nextLine();
+
+            // SQL Injection vulnerability (Security Issue)
+            String query = "SELECT * FROM users WHERE username = '" + input + "'";
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                System.out.println("User: " + rs.getString("username"));
+            }
+
+            // Resource leak: Scanner and Connection not closed properly (Maintainability Issue)
+        } catch (Exception e) {
+            // Catching generic Exception (Maintainability Issue)
+            System.out.println("Error occurred: " + e.getMessage());
+        }
+    }
 }
-
-    
