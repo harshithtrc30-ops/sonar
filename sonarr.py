@@ -1,29 +1,42 @@
+# Example Python program with intentional errors for SonarQube testing
+
 import os
-import hashlib
-import requests
+import sys
 
-# Global variables everywhere (Maintainability Issue)
-API_KEY = "12345-SECRET"   # Hardcoded secret key (Security Issue)
-user_data = {}
+def divide_numbers(a, b):
+    # Potential division by zero
+    return a / b  
 
-def insecure_login(username, password):
-    # Storing plain text password (Security Issue)
-    user_data[username] = password
+def insecure_function():
+    # Hardcoded password (security issue)
+    password = "123456"
+    print("Password is:", password)
 
-    # Weak hashing (MD5 is broken) (Security Issue)
-    hashed = hashlib.md5(password.encode()).hexdigest()
-    print("MD5 hash:", hashed)
+def unused_function(x, y):
+    # Function never used (dead code)
+    return x + y
 
-    # No input validation (Security Issue)
-    if len(username) == 0:
-        print("Empty username allowed!")  # Bad practice
+def main():
+    numbers = [1, 2, 3, 4, 5]
 
-def fetch_data(endpoint):
-    # Hardcoded URL (Maintainability Issue)
-    url = "http://example.com/api/" + endpoint
+    # Off-by-one error: accessing out-of-range index
+    print("Last number:", numbers[len(numbers)])
 
-    # No SSL verification (Security Issue)
-    response = requests.get(url, verify=False)
+    # Resource leak: file opened but never closed
+    f = open("test.txt", "w")
+    f.write("Hello World")
 
-    # Ignoring errors (Maintainability Issue)
-    print("Response:", response
+    # Exception not handled
+    result = divide_numbers(10, 0)
+    print("Result:", result)
+
+    # Bad practice: using eval with user input
+    user_input = input("Enter something: ")
+    eval(user_input)
+
+    # Unreachable code
+    return
+    print("This will never run")
+
+if __name__ == "__main__":
+    main()
