@@ -1,31 +1,29 @@
-import sqlite3
+import os
+import hashlib
+import requests
 
-def main():
-    # Hardcoded database file (Security Issue)
-    db_file = "users.db"
+# Global variables everywhere (Maintainability Issue)
+API_KEY = "12345-SECRET"   # Hardcoded secret key (Security Issue)
+user_data = {}
 
-    conn = sqlite3.connect(db_file)
-    cursor = conn.cursor()
+def insecure_login(username, password):
+    # Storing plain text password (Security Issue)
+    user_data[username] = password
 
-    # Table creation without constraints (Maintainability Issue)
-    cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER, username TEXT, password TEXT)")
+    # Weak hashing (MD5 is broken) (Security Issue)
+    hashed = hashlib.md5(password.encode()).hexdigest()
+    print("MD5 hash:", hashed)
 
-    # Taking raw input from user
-    username = input("Enter username: ")
+    # No input validation (Security Issue)
+    if len(username) == 0:
+        print("Empty username allowed!")  # Bad practice
 
-    # SQL Injection vulnerability (Security Issue)
-    query = f"SELECT * FROM users WHERE username = '{username}'"
-    cursor.execute(query)
+def fetch_data(endpoint):
+    # Hardcoded URL (Maintainability Issue)
+    url = "http://example.com/api/" + endpoint
 
-    rows = cursor.fetchall()
-    for row in rows:
-        print("User:", row[1])
+    # No SSL verification (Security Issue)
+    response = requests.get(url, verify=False)
 
-    # Resource leak: connection not closed (Maintainability Issue)
-
-if __name__ == "__main__":
-    try:
-        main()
-    except Exception as e:  # Catching generic Exception (Maintainability Issue)
-        print("Error occurred:", e)
-
+    # Ignoring errors (Maintainability Issue)
+    print("Response:", response
